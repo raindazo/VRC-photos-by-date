@@ -1,0 +1,10 @@
+# デフォルトの無視対象ファイル
+/shelf/
+/workspace.xml
+
+# User-specific stuff
+/checkstyle-idea.xml
+/misc.xml
+/modules.xml
+/uiDesigner.xml
+/vcs.xml
