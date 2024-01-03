@@ -1,4 +1,5 @@
 import java.io.File;
+import java.util.List;
 
 public interface CreateFileUtils {
 
@@ -18,7 +19,7 @@ public interface CreateFileUtils {
     void exceptionLog(Exception exception);
 
     /**写真を日付分け*/
-    void movePictures();
+    void movePictures(List<File> picturesList,String createPictureFilePath);
 
     /**移動した写真を削除する*/
     void pictureDelete(String deletePicture);

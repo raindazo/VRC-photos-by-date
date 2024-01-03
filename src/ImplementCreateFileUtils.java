@@ -11,12 +11,13 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.*;
 
-public class ImplementCreateFile implements CreateFileUtils {
+public class ImplementCreateFileUtils implements CreateFileUtils {
 
     /**
      * @param vrcPictureFilePath    VRCの写真が格納されているパス
      * @param createPictureFilePath 撮影日分けされたファイルを保存するパス
      *                              <p>ファイルを作成 </p>
+     * @author raindazo
      */
     @Override
     public void fileCreate(String vrcPictureFilePath, String createPictureFilePath) {
@@ -49,14 +50,14 @@ public class ImplementCreateFile implements CreateFileUtils {
                     exceptionLog(e);
                 }
             });
-
-            DeleteLog deleteLog = new DeleteLog();
-            deleteLog.setDeletelList(picturesList);
+            movePictures(picturesList, createPictureFilePath);
         }
     }
 
     /**
      * 削除したファイルをlogファイルに出力
+     *
+     * @author raindazo
      */
     @Override
     public void fillOutDeleteLog() {
@@ -82,20 +83,16 @@ public class ImplementCreateFile implements CreateFileUtils {
 
     /**
      * DeleteLogファイルが存在するか確認
+     *
+     * @author raindazo
      */
     @Override
     public void checkDeleteLogFile(String path, String need) {
         try {
             if (need.equals("True")) {
                 File[] dir = new File(path).listFiles();
-                boolean existDeleteLogFile = false;
-
-                for (File f : Objects.requireNonNull(dir)) {
-                    if (f.getName().equals(path + "\\DeleteLog")) {
-                        existDeleteLogFile = true;
-                        break;
-                    }
-                }
+                boolean existDeleteLogFile = Arrays.stream(Objects.requireNonNull(dir))
+                        .anyMatch(f -> f.getName().equals("DeleteLog"));
 
                 if (!existDeleteLogFile) {
                     Files.createDirectory(Path.of(path + "\\DeleteLog"));
@@ -104,7 +101,6 @@ public class ImplementCreateFile implements CreateFileUtils {
             }
         } catch (IOException e) {
             exceptionLog(e);
-            System.exit(0);
         }
     }
 
@@ -112,6 +108,7 @@ public class ImplementCreateFile implements CreateFileUtils {
      * 写真が保存されて日付を確認
      *
      * @param file 日付を取得したいファイルパス
+     * @author raindazo
      */
     @Override
     public String checkDate(File file) {
@@ -130,24 +127,40 @@ public class ImplementCreateFile implements CreateFileUtils {
 
     /**
      * メッセージと例外を表示
+     *
+     * @author raindazo
      */
     @Override
     public void exceptionLog(Exception e) {
         System.out.println("例外が発生しました。");
         System.out.println("解決できない場合は、お手数おかけしますが、以下のログと合わせて開発者にご連絡ください。");
         e.printStackTrace();
+        System.exit(0);
     }
 
     /**
      * 写真を日付分けする
+     *
+     * @author raindazo
      */
     @Override
-    public void movePictures() {
-
+    public void movePictures(List<File> picturesList, String createPictureFilePath) {
+        File[] datePath = new File(createPictureFilePath).listFiles();
+        List<String> deleteList = new ArrayList<>();
+        picturesList.forEach(picture -> {
+            Arrays.stream(Objects.requireNonNull(datePath)).forEach(path -> {
+                if (checkDate(picture).equals(path.getName())) {
+                    deleteList.add(picture.getName());
+                    picture.renameTo(new File(path +  "\\" + picture.getName()));
+                }
+            });
+        });
     }
 
     /**
      * 移動した写真を削除する
+     *
+     * @author raindazo
      */
     @Override
     public void pictureDelete(String deletePicture) {
