@@ -14,12 +14,10 @@ class Main {
 
         ImplementCreateFileUtils implementCreateFile = new ImplementCreateFileUtils();
 
-        if (implementCreateFile.validation(args)) {
-            return;
-        }
+        boolean validation = implementCreateFile.validation(args);
 
         //ファイル作成
-        if (implementCreateFile.fileCreate(args[0], args[1])) {
+        if (!validation && implementCreateFile.fileCreate(args[0], args[1])) {
             //移動ファイルが存在するか確認
             implementCreateFile.checkDeleteLogFile(args[1], args[2]);
         }

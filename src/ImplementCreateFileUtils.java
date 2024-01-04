@@ -24,7 +24,7 @@ public class ImplementCreateFileUtils implements CreateFileUtils {
     public boolean fileCreate(String vrcPictureFilePath, String createPictureFilePath) {
 
         File[] pictureFilePath = new File(vrcPictureFilePath).listFiles();
-        File[] createFilePath =  new File(createPictureFilePath).listFiles();
+        File[] createFilePath = new File(createPictureFilePath).listFiles();
 
         if (Objects.nonNull(pictureFilePath) && Objects.nonNull(createFilePath)) {
             List<File> picturesList = new ArrayList<>();
@@ -54,7 +54,7 @@ public class ImplementCreateFileUtils implements CreateFileUtils {
                 }
             });
             movePictures(picturesList, createPictureFilePath);
-        }else{
+        } else {
             String notPath = Objects.isNull(pictureFilePath) ? vrcPictureFilePath : createPictureFilePath;
             System.out.println(notPath + "が存在しません。\n存在するファイルを再度設定してください。");
             return false;
@@ -171,15 +171,16 @@ public class ImplementCreateFileUtils implements CreateFileUtils {
     public boolean validation(String[] args) {
         final String ng = ".*[@＠｢「｣」：]+.*";
 
+        if (args.length != 3) {
+            System.out.println("入力されていない項目があります。");
+            return true;
+        }
+
         if (Stream.of(args).limit(2).anyMatch(path -> path.matches(ng))) {
             System.out.println(args[0] + "もしくは" + args[1] + "に使用できない文字(￥,：,＊,？,”,＜,＞,｜)が含まれています。\nパスを確認後、再度起動してください。");
             return true;
         }
-
-        if (Stream.of(args).anyMatch(String::isEmpty)) {
-            System.out.println("入力されていない項目があります。");
-            return true;
-        }
+        
         return false;
     }
 }
