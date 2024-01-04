@@ -5,7 +5,7 @@ import java.util.List;
 public interface CreateFileUtils {
 
     /**ファイルを作成*/
-    void fileCreate(String path,String need);
+    boolean fileCreate(String path,String need);
 
     /**移動したファイルをlogファイルに出力*/
     void fillmovedLog(Path path);
@@ -21,5 +21,8 @@ public interface CreateFileUtils {
 
     /**写真を日付分け*/
     void movePictures(List<File> picturesList,String createPictureFilePath);
+
+    /**バリデーションチェック*/
+    boolean validation(String[] args);
 
 }

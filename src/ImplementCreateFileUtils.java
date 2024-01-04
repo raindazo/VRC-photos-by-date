@@ -10,6 +10,7 @@ import java.nio.file.attribute.FileTime;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.*;
+import java.util.stream.Stream;
 
 public class ImplementCreateFileUtils implements CreateFileUtils {
 
@@ -20,13 +21,15 @@ public class ImplementCreateFileUtils implements CreateFileUtils {
      * @author raindazo
      */
     @Override
-    public void fileCreate(String vrcPictureFilePath, String createPictureFilePath) {
-        File[] dirs = new File(vrcPictureFilePath).listFiles();
+    public boolean fileCreate(String vrcPictureFilePath, String createPictureFilePath) {
 
-        if (dirs != null) {
+        File[] pictureFilePath = new File(vrcPictureFilePath).listFiles();
+        File[] createFilePath =  new File(createPictureFilePath).listFiles();
+
+        if (Objects.nonNull(pictureFilePath) && Objects.nonNull(createFilePath)) {
             List<File> picturesList = new ArrayList<>();
 
-            Arrays.stream(dirs)
+            Arrays.stream(pictureFilePath)
                     .filter(file -> !file.toString().equals(createPictureFilePath))
                     .forEach(file -> {
                         picturesList.addAll(Arrays.asList(Objects.requireNonNull(new File(String.valueOf(file)).listFiles())));
@@ -51,7 +54,12 @@ public class ImplementCreateFileUtils implements CreateFileUtils {
                 }
             });
             movePictures(picturesList, createPictureFilePath);
+        }else{
+            String notPath = Objects.isNull(pictureFilePath) ? vrcPictureFilePath : createPictureFilePath;
+            System.out.println(notPath + "が存在しません。\n存在するファイルを再度設定してください。");
+            return false;
         }
+        return true;
     }
 
     /**
@@ -65,7 +73,7 @@ public class ImplementCreateFileUtils implements CreateFileUtils {
 
         try {
             String fileName = path + "\\" + today + "_MovedLog.txt";
-            BufferedWriter bw = new BufferedWriter(new FileWriter(fileName,true));
+            BufferedWriter bw = new BufferedWriter(new FileWriter(fileName, true));
             for (String value : MovedLog.getList()) {
                 bw.write(value);
                 bw.newLine();
@@ -76,8 +84,6 @@ public class ImplementCreateFileUtils implements CreateFileUtils {
         } catch (IOException e) {
             exceptionLog(e);
         }
-
-
     }
 
     /**
@@ -116,6 +122,7 @@ public class ImplementCreateFileUtils implements CreateFileUtils {
     public String checkDate(File file) {
         BasicFileAttributes attrs;
         String pictureDate = null;
+
         try {
             attrs = Files.readAttributes(file.toPath(), BasicFileAttributes.class);
             FileTime time = attrs.creationTime();
@@ -158,5 +165,21 @@ public class ImplementCreateFileUtils implements CreateFileUtils {
                 }
             }
         }
+    }
+
+    @Override
+    public boolean validation(String[] args) {
+        final String ng = ".*[@＠｢「｣」：]+.*";
+
+        if (Stream.of(args).limit(2).anyMatch(path -> path.matches(ng))) {
+            System.out.println(args[0] + "もしくは" + args[1] + "に使用できない文字(￥,：,＊,？,”,＜,＞,｜)が含まれています。\nパスを確認後、再度起動してください。");
+            return true;
+        }
+
+        if (Stream.of(args).anyMatch(String::isEmpty)) {
+            System.out.println("入力されていない項目があります。");
+            return true;
+        }
+        return false;
     }
 }
