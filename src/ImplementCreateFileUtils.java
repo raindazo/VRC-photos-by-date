@@ -55,25 +55,24 @@ public class ImplementCreateFileUtils implements CreateFileUtils {
     }
 
     /**
-     * 削除したファイルをlogファイルに出力
+     * 移動したファイルをlogファイルに出力
      *
      * @author raindazo
      */
     @Override
-    public void fillOutDeleteLog() {
+    public void fillmovedLog(Path path) {
         final String today = LocalDate.now().toString().replace("-", "");
-        DeleteLog deleteLog = new DeleteLog();
 
         try {
-            BufferedWriter bw = new BufferedWriter(
-                    new FileWriter("./DeleteLog/" + today + "_DeleteLog.txt"));
-
-            for (File value : deleteLog.getDeletelList()) {
-                bw.write(value.toString());
+            String fileName = path + "\\" + today + "_MovedLog.txt";
+            BufferedWriter bw = new BufferedWriter(new FileWriter(fileName,true));
+            for (String value : MovedLog.getList()) {
+                bw.write(value);
+                bw.newLine();
             }
             bw.close();
 
-            System.out.println("削除したファイルをlogファイルに出力しました。[" + bw + "]");
+            System.out.println("移動したファイルをlogファイルに出力しました。[" + fileName + "]");
         } catch (IOException e) {
             exceptionLog(e);
         }
@@ -82,7 +81,7 @@ public class ImplementCreateFileUtils implements CreateFileUtils {
     }
 
     /**
-     * DeleteLogファイルが存在するか確認
+     * MovedLogファイルが存在するか確認
      *
      * @author raindazo
      */
@@ -92,12 +91,15 @@ public class ImplementCreateFileUtils implements CreateFileUtils {
             if (need.equals("True")) {
                 File[] dir = new File(path).listFiles();
                 boolean existDeleteLogFile = Arrays.stream(Objects.requireNonNull(dir))
-                        .anyMatch(f -> f.getName().equals("DeleteLog"));
+                        .anyMatch(f -> f.getName().equals("MovedLog"));
+
+                Path movedLogPath = Path.of(path + "\\MovedLog");
 
                 if (!existDeleteLogFile) {
-                    Files.createDirectory(Path.of(path + "\\DeleteLog"));
+                    Files.createDirectory(movedLogPath);
                     System.out.println("DeleteLogファイルを作成しました。");
                 }
+                fillmovedLog(movedLogPath);
             }
         } catch (IOException e) {
             exceptionLog(e);
@@ -146,30 +148,15 @@ public class ImplementCreateFileUtils implements CreateFileUtils {
     @Override
     public void movePictures(List<File> picturesList, String createPictureFilePath) {
         File[] datePath = new File(createPictureFilePath).listFiles();
-        List<String> deleteList = new ArrayList<>();
-        picturesList.forEach(picture -> {
-            Arrays.stream(Objects.requireNonNull(datePath)).forEach(path -> {
+
+        for (File picture : picturesList) {
+            for (File path : Objects.requireNonNull(datePath)) {
                 if (checkDate(picture).equals(path.getName())) {
-                    deleteList.add(picture.getName());
-                    picture.renameTo(new File(path +  "\\" + picture.getName()));
+                    MovedLog.addList(picture.getName());
+                    picture.renameTo(new File(path + "\\" + picture.getName()));
+                    break;
                 }
-            });
-        });
-    }
-
-    /**
-     * 移動した写真を削除する
-     *
-     * @author raindazo
-     */
-    @Override
-    public void pictureDelete(String deletePicture) {
-        if (deletePicture.equals("True")) {
-            DeleteLog deleteLog = new DeleteLog();
-
-            deleteLog.getDeletelList().forEach(System.out::println);
-
-            fillOutDeleteLog();
+            }
         }
     }
 }

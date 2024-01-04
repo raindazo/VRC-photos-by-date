@@ -1,4 +1,5 @@
 import java.io.File;
+import java.nio.file.Path;
 import java.util.List;
 
 public interface CreateFileUtils {
@@ -6,8 +7,8 @@ public interface CreateFileUtils {
     /**ファイルを作成*/
     void fileCreate(String path,String need);
 
-    /**削除したファイルをlogファイルに出力*/
-    void fillOutDeleteLog();
+    /**移動したファイルをlogファイルに出力*/
+    void fillmovedLog(Path path);
 
     /**DeleteLogファイルが存在するか確認*/
     void checkDeleteLogFile(String path,String need);
@@ -20,8 +21,5 @@ public interface CreateFileUtils {
 
     /**写真を日付分け*/
     void movePictures(List<File> picturesList,String createPictureFilePath);
-
-    /**移動した写真を削除する*/
-    void pictureDelete(String deletePicture);
 
 }

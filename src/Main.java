@@ -31,9 +31,6 @@ class Main {
         //エラーログファイルが存在するか確認
         implementCreateFile.checkDeleteLogFile(args[1], args[3]);
 
-        //移動したファイルを削除する
-        implementCreateFile.pictureDelete(args[2]);
-
         System.out.println("処理が終了しました。");
     }
 }
