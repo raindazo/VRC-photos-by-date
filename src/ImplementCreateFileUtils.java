@@ -125,7 +125,7 @@ public class ImplementCreateFileUtils implements CreateFileUtils {
 
         try {
             attrs = Files.readAttributes(file.toPath(), BasicFileAttributes.class);
-            FileTime time = attrs.creationTime();
+            FileTime time = attrs.lastModifiedTime();
 
             pictureDate = new SimpleDateFormat("yyyy.MM.dd").format(new Date(time.toMillis()));
         } catch (IOException e) {
