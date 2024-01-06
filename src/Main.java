@@ -22,6 +22,6 @@ class Main {
             implementCreateFile.checkDeleteLogFile(args[1], args[2]);
         }
 
-        System.out.println("処理が終了しました。");
+        System.out.println("処理を終了しました。");
     }
 }

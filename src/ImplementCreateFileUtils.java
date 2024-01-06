@@ -71,18 +71,22 @@ public class ImplementCreateFileUtils implements CreateFileUtils {
     public void fillmovedLog(Path path) {
         final String today = LocalDate.now().toString().replace("-", "");
 
-        try {
-            String fileName = path + "\\" + today + "_MovedLog.txt";
-            BufferedWriter bw = new BufferedWriter(new FileWriter(fileName, true));
-            for (String value : MovedLog.getList()) {
-                bw.write(value);
-                bw.newLine();
-            }
-            bw.close();
+        if (!MovedLog.getList().isEmpty()) {
+            try {
+                String fileName = path + "\\" + today + "_MovedLog.txt";
+                BufferedWriter bw = new BufferedWriter(new FileWriter(fileName, true));
+                for (String value : MovedLog.getList()) {
+                    bw.write(value);
+                    bw.newLine();
+                }
+                bw.close();
 
-            System.out.println("移動したファイルをlogファイルに出力しました。[" + fileName + "]");
-        } catch (IOException e) {
-            exceptionLog(e);
+                System.out.println("移動したファイルをlogファイルに出力しました。[" + fileName + "]");
+            } catch (IOException e) {
+                exceptionLog(e);
+            }
+        } else {
+            System.out.println("移動したファイルはありませんでした。");
         }
     }
 
@@ -164,6 +168,9 @@ public class ImplementCreateFileUtils implements CreateFileUtils {
                     break;
                 }
             }
+        }
+        if (!MovedLog.getList().isEmpty()) {
+            System.out.println(MovedLog.getList().size() + "件ファイルを移動しました");
         }
     }
 
