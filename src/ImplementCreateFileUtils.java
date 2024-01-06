@@ -30,7 +30,7 @@ public class ImplementCreateFileUtils implements CreateFileUtils {
             List<File> picturesList = new ArrayList<>();
 
             Arrays.stream(pictureFilePath)
-                    .filter(file -> !file.toString().equals(createPictureFilePath))
+                    .filter(file -> !file.equals(new File(createPictureFilePath)))
                     .forEach(file -> {
                         picturesList.addAll(Arrays.asList(Objects.requireNonNull(new File(String.valueOf(file)).listFiles())));
                     });
@@ -180,7 +180,7 @@ public class ImplementCreateFileUtils implements CreateFileUtils {
             System.out.println(args[0] + "もしくは" + args[1] + "に使用できない文字(￥,：,＊,？,”,＜,＞,｜)が含まれています。\nパスを確認後、再度起動してください。");
             return true;
         }
-        
+
         return false;
     }
 }
