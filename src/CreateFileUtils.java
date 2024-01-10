@@ -10,8 +10,8 @@ public interface CreateFileUtils {
     /**移動したファイルをlogファイルに出力*/
     void fillmovedLog(Path path);
 
-    /**DeleteLogファイルが存在するか確認*/
-    void checkDeleteLogFile(String path,String need);
+    /**MovedLogLogファイルが存在するか確認*/
+    void checkMovedLogFile(String path,String need);
 
     /**写真が保存されて日付を確認*/
     String checkDate(File file);

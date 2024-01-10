@@ -5,11 +5,13 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.nio.file.attribute.FileTime;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.*;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class ImplementCreateFileUtils implements CreateFileUtils {
@@ -26,33 +28,38 @@ public class ImplementCreateFileUtils implements CreateFileUtils {
         File[] pictureFilePath = new File(vrcPictureFilePath).listFiles();
         File[] createFilePath = new File(createPictureFilePath).listFiles();
 
+        //作成する必要がある
         if (Objects.nonNull(pictureFilePath) && Objects.nonNull(createFilePath)) {
-            List<File> picturesList = new ArrayList<>();
-
-            Arrays.stream(pictureFilePath)
+            //pictureFilePathにcreatePictureFilePathを含まないようにする。
+            List<File> picturesList = Arrays.stream(pictureFilePath)
                     .filter(file -> !file.equals(new File(createPictureFilePath)))
-                    .forEach(file -> {
-                        picturesList.addAll(Arrays.asList(Objects.requireNonNull(new File(String.valueOf(file)).listFiles())));
-                    });
+                    .flatMap(file -> Arrays.stream(Objects.requireNonNull(file.listFiles())))
+                    .collect(Collectors.toList());
 
-            Set<Path> datelList = new LinkedHashSet<>();
-
-            picturesList.stream()
+            //作成する必要がある日付ファイルのパスを取得
+            Set<Path> dateList = picturesList.stream()
                     .map(this::checkDate)
-                    .forEach(value -> datelList.add(Paths.get(createPictureFilePath + "\\" + value)));
+                    .map(value -> Paths.get(createPictureFilePath, value))
+                    .collect(Collectors.toCollection(LinkedHashSet::new));
 
+            //出力ファイルの中身を取得
             List<File> existFile = Arrays.stream(Objects.requireNonNull(new File(createPictureFilePath).listFiles())).toList();
 
             //出力ファイルにすでに日付ファイルがあれば生成リストから削除
-            existFile.stream().map(String::valueOf).forEach(value -> datelList.remove(Paths.get(value)));
+            existFile.stream()
+                    .map(String::valueOf)
+                    .map(Paths::get)
+                    .forEach(dateList::remove);
 
-            datelList.forEach(d -> {
+            //日付ファイルを作成
+            dateList.forEach(d -> {
                 try {
                     Files.createDirectory(d);
                 } catch (IOException e) {
                     exceptionLog(e);
                 }
             });
+            //写真を日付分けする
             movePictures(picturesList, createPictureFilePath);
         } else {
             String notPath = Objects.isNull(pictureFilePath) ? vrcPictureFilePath : createPictureFilePath;
@@ -69,19 +76,13 @@ public class ImplementCreateFileUtils implements CreateFileUtils {
      */
     @Override
     public void fillmovedLog(Path path) {
-        final String today = LocalDate.now().toString().replace("-", "");
+        String today = LocalDate.now().toString().replace("-", "");
 
         if (!MovedLog.getList().isEmpty()) {
             try {
-                String fileName = path + "\\" + today + "_MovedLog.txt";
-                BufferedWriter bw = new BufferedWriter(new FileWriter(fileName, true));
-                for (String value : MovedLog.getList()) {
-                    bw.write(value);
-                    bw.newLine();
-                }
-                bw.close();
-
-                System.out.println("移動したファイルをlogファイルに出力しました。[" + fileName + "]");
+                Path logFilePath = Paths.get(path.toString(), today + "_MovedLog.txt");
+                Files.write(logFilePath, MovedLog.getList(), StandardOpenOption.CREATE, StandardOpenOption.APPEND);
+                System.out.println("移動したファイルをlogファイルに出力しました。[" + logFilePath + "]");
             } catch (IOException e) {
                 exceptionLog(e);
             }
@@ -96,7 +97,7 @@ public class ImplementCreateFileUtils implements CreateFileUtils {
      * @author raindazo
      */
     @Override
-    public void checkDeleteLogFile(String path, String need) {
+    public void checkMovedLogFile(String path, String need) {
         try {
             if (need.equals("True")) {
                 File[] dir = new File(path).listFiles();
@@ -160,20 +161,25 @@ public class ImplementCreateFileUtils implements CreateFileUtils {
     public void movePictures(List<File> picturesList, String createPictureFilePath) {
         File[] datePath = new File(createPictureFilePath).listFiles();
 
-        for (File picture : picturesList) {
-            for (File path : Objects.requireNonNull(datePath)) {
-                if (checkDate(picture).equals(path.getName())) {
+        picturesList.forEach(picture -> Arrays.stream(Objects.requireNonNull(datePath))
+                .filter(path -> checkDate(picture).equals(path.getName()))
+                .findFirst()
+                .ifPresent(path -> {
                     MovedLog.addList(picture.getName());
-                    picture.renameTo(new File(path + "\\" + picture.getName()));
-                    break;
-                }
-            }
-        }
+                    picture.renameTo(new File(path.toPath().resolve(picture.getName()).toString()));
+                }));
+
         if (!MovedLog.getList().isEmpty()) {
             System.out.println(MovedLog.getList().size() + "件ファイルを移動しました");
         }
     }
 
+
+    /**
+     * argsのバリデーションチェック
+     *
+     * @author raindazo
+     */
     @Override
     public boolean validation(String[] args) {
         final String ng = ".*[@＠｢「｣」：]+.*";
