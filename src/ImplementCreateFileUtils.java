@@ -1,6 +1,4 @@
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -24,11 +22,9 @@ public class ImplementCreateFileUtils implements CreateFileUtils {
      */
     @Override
     public boolean fileCreate(String vrcPictureFilePath, String createPictureFilePath) {
-
         File[] pictureFilePath = new File(vrcPictureFilePath).listFiles();
         File[] createFilePath = new File(createPictureFilePath).listFiles();
 
-        //作成する必要がある
         if (Objects.nonNull(pictureFilePath) && Objects.nonNull(createFilePath)) {
             //pictureFilePathにcreatePictureFilePathを含まないようにする。
             List<File> picturesList = Arrays.stream(pictureFilePath)
@@ -165,7 +161,7 @@ public class ImplementCreateFileUtils implements CreateFileUtils {
                 .filter(path -> checkDate(picture).equals(path.getName()))
                 .findFirst()
                 .ifPresent(path -> {
-                    MovedLog.addList(picture.getName());
+                    MovedLog.addEntry(picture.getName(), path.getName());
                     picture.renameTo(new File(path.toPath().resolve(picture.getName()).toString()));
                 }));
 
