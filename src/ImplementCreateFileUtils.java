@@ -26,14 +26,19 @@ public class ImplementCreateFileUtils implements CreateFileUtils {
         File[] createFilePath = new File(createPictureFilePath).listFiles();
 
         if (Objects.nonNull(pictureFilePath) && Objects.nonNull(createFilePath)) {
+            List<File> separated = Stream.of(pictureFilePath).filter(file -> !file.isDirectory()).toList();
+
             //pictureFilePathにcreatePictureFilePathを含まないようにする。
             List<File> picturesList = Arrays.stream(pictureFilePath)
+                    .filter(File::isDirectory)
                     .filter(file -> !file.equals(new File(createPictureFilePath)))
                     .flatMap(file -> Arrays.stream(Objects.requireNonNull(file.listFiles())))
-                    .collect(Collectors.toList());
+                    .toList();
+
+            List<File>margeList = Stream.concat(picturesList.stream(),separated.stream()).toList();
 
             //作成する必要がある日付ファイルのパスを取得
-            Set<Path> dateList = picturesList.stream()
+            Set<Path> dateList = margeList.stream()
                     .map(this::checkDate)
                     .map(value -> Paths.get(createPictureFilePath, value))
                     .collect(Collectors.toCollection(LinkedHashSet::new));
@@ -56,7 +61,7 @@ public class ImplementCreateFileUtils implements CreateFileUtils {
                 }
             });
             //写真を日付分けする
-            movePictures(picturesList, createPictureFilePath);
+            movePictures(margeList, createPictureFilePath);
         } else {
             String notPath = Objects.isNull(pictureFilePath) ? vrcPictureFilePath : createPictureFilePath;
             System.out.println(notPath + "が存在しません。\n存在するファイルを再度設定してください。");

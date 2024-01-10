@@ -13,6 +13,7 @@ class Main {
 
         CreateFileUtils implementCreateFile = new ImplementCreateFileUtils();
 
+        //バリデーションチェック
         boolean validation = implementCreateFile.validation(args);
 
         //ファイル作成
