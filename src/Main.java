@@ -1,5 +1,3 @@
-package main;
-
 import Util.CreateFileUtils;
 import Util.CreateTaskScheduler;
 import Util.ImplementCreateFileUtils;
