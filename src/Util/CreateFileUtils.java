@@ -1,3 +1,5 @@
+package Util;
+
 import java.io.File;
 import java.nio.file.Path;
 import java.util.List;
@@ -15,9 +17,6 @@ public interface CreateFileUtils {
 
     /**写真が保存されて日付を確認*/
     String checkDate(File file);
-
-    /**メッセージと例外を表示*/
-    void exceptionLog(Exception exception);
 
     /**写真を日付分け*/
     void movePictures(List<File> picturesList,String createPictureFilePath);

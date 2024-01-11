@@ -1,3 +1,8 @@
+package Util;
+
+import exception.MyException;
+import field.MovedLog;
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -57,7 +62,7 @@ public class ImplementCreateFileUtils implements CreateFileUtils {
                 try {
                     Files.createDirectory(d);
                 } catch (IOException e) {
-                    exceptionLog(e);
+                    new MyException(e);
                 }
             });
             //写真を日付分けする
@@ -85,7 +90,7 @@ public class ImplementCreateFileUtils implements CreateFileUtils {
                 Files.write(logFilePath, MovedLog.getList(), StandardOpenOption.CREATE, StandardOpenOption.APPEND);
                 System.out.println("移動したファイルをlogファイルに出力しました。[" + logFilePath + "]");
             } catch (IOException e) {
-                exceptionLog(e);
+                new MyException(e);
             }
         } else {
             System.out.println("移動したファイルはありませんでした。");
@@ -114,7 +119,7 @@ public class ImplementCreateFileUtils implements CreateFileUtils {
                 fillmovedLog(movedLogPath);
             }
         } catch (IOException e) {
-            exceptionLog(e);
+            new MyException(e);
         }
     }
 
@@ -135,22 +140,9 @@ public class ImplementCreateFileUtils implements CreateFileUtils {
 
             pictureDate = new SimpleDateFormat("yyyy.MM.dd").format(new Date(time.toMillis()));
         } catch (IOException e) {
-            exceptionLog(e);
+            new MyException(e);
         }
         return pictureDate;
-    }
-
-    /**
-     * メッセージと例外を表示
-     *
-     * @author raindazo
-     */
-    @Override
-    public void exceptionLog(Exception e) {
-        System.out.println("例外が発生しました。");
-        System.out.println("解決できない場合は、お手数おかけしますが、以下のログと合わせて開発者にご連絡ください。");
-        e.printStackTrace();
-        System.exit(0);
     }
 
     /**

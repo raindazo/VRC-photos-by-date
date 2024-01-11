@@ -1,3 +1,10 @@
+package main;
+
+import Util.CreateFileUtils;
+import Util.CreateTaskScheduler;
+import Util.ImplementCreateFileUtils;
+import Util.ImplementTaskSchedulerUtils;
+
 /**
  * 万が一何か損失や損害が発生した場合、当方一切責任を負いません。
  * <p>
@@ -8,7 +15,14 @@
 
 class Main {
     public static void main(String[] args) {
+        if (args[0].equals("CreateTaskScheduler")) {
+            CreateTaskSchedulerExecute(args);
+        } else {
+            FileCreateExecute(args);
+        }
+    }
 
+    public static void FileCreateExecute(String[] args) {
         System.out.println("処理を開始します。");
 
         CreateFileUtils implementCreateFile = new ImplementCreateFileUtils();
@@ -23,5 +37,14 @@ class Main {
         }
 
         System.out.println("処理を終了しました。");
+    }
+
+    public static void CreateTaskSchedulerExecute(String[] args) {
+
+        CreateTaskScheduler ImplementTaskScheduler = new ImplementTaskSchedulerUtils();
+
+        ImplementTaskScheduler.readXml(args[1]);
+
+
     }
 }
