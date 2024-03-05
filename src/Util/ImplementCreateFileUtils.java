@@ -40,7 +40,7 @@ public class ImplementCreateFileUtils implements CreateFileUtils {
                     .flatMap(file -> Arrays.stream(Objects.requireNonNull(file.listFiles())))
                     .toList();
 
-            List<File>margeList = Stream.concat(picturesList.stream(),separated.stream()).toList();
+            List<File> margeList = Stream.concat(picturesList.stream(), separated.stream()).toList();
 
             //作成する必要がある日付ファイルのパスを取得
             Set<Path> dateList = margeList.stream()
