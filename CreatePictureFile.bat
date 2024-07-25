@@ -5,10 +5,10 @@ chcp 65001
 rem イコール(=)の右に指定されている値を入力してください
 
 rem VRCの写真が格納されているパス(例：C:\Users\user\画像\VRChat (yyyy-MMが保存されているファイルです))
-set vrcPictureFilePath=C:\Users\rein6\OneDrive\画像\VRChat
+set vrcPictureFilePath=
 
 rem 撮影日分けされたファイルを保存するパス(例：C:\Users\output\画像\VRChat)
-set createPictureFilePath=C:\Users\rein6\OneDrive\画像\VRChat\日付分け
+set createPictureFilePath=
 
 rem 写真の名前をログに記録するか(記録する：True , 記録しない：False)
 set showDeletedPictureName=True
