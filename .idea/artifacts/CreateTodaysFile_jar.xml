@@ -1,8 +1,0 @@
-<component name="ArtifactManager">
-  <artifact type="jar" name="CreateTodaysFile:jar">
-    <output-path>$PROJECT_DIR$/out/artifacts/CreateTodaysFile_jar</output-path>
-    <root id="archive" name="Create todays file.jar">
-      <element id="module-output" name="Create todays file" />
-    </root>
-  </artifact>
-</component>
