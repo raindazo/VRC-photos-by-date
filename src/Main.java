@@ -3,6 +3,8 @@ import Util.CreateTaskScheduler;
 import Util.ImplementCreateFileUtils;
 import Util.ImplementTaskSchedulerUtils;
 
+import javax.swing.*;
+
 /**
  * 万が一何か損失や損害が発生した場合、当方一切責任を負いません。
  * <p>
@@ -11,12 +13,15 @@ import Util.ImplementTaskSchedulerUtils;
  * @author raindazo
  */
 
-class Main {
+public class Main {
     public static void main(String[] args) {
+
+        // TODO 直接バッチ起動→ウィンドウ表示。
+        // TODO タスクスケジューラ→引数増やしてウィンドウを表示させない。
         if (args[0].equals("CreateTaskScheduler")) {
             CreateTaskSchedulerExecute(args);
         } else {
-            FileCreateExecute(args);
+            new SettingGUI();
         }
     }
 
