@@ -1,4 +1,6 @@
 
+import exception.MyException;
+
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 
@@ -74,19 +76,19 @@ public class SettingGUI {
                             "$buttonRun.Add_Click({\n" +
                             "    $vrcPictureFilePath = $textBox1.Text\n" +
                             "    $createPictureFilePath = $textBox2.Text\n" +
-                            "    if ($vrcPictureFilePath -and $createPictureFilePath　-ne $null) {\n" +
-                            "        # 一時ファイルに保存\n" +
-                            "        $tempFile = [System.IO.Path]::GetTempFileName()\n" +
+                            "    if ($vrcPictureFilePath -and $createPictureFilePath -ne $null) {\n" +
+                            "        # 設定ファイルに保存\n" +
+                            "        $tempFile = [System.IO.Path]::Combine((Get-Location).Path, \"VRCpbd.setting\")\n" +
                             "        $content = \"$vrcPictureFilePath`r`n$createPictureFilePath\"\n" +
                             "        [System.IO.File]::WriteAllText($tempFile, $content)\n" +
                             "        [System.Windows.Forms.MessageBox]::Show(\"一時ファイルに保存しました: $tempFile\")\n" +
-                            //TODO 一時ファイルの場所を表示しない。
-                            //TODO 処理終了後ウィンドウを閉じる。
                             "    } else {\n" +
                             "        [System.Windows.Forms.MessageBox]::Show('すべての情報を入力してください。')\n" +
                             "    }\n" +
                             "})\n" +
                             "\n" +
+                            //TODO 一時ファイルの場所を表示しない。
+                            //TODO 処理終了後ウィンドウを閉じる。
                             "# フォームにコントロールを追加\n" +
                             "$form.Controls.Add($button1)\n" +
                             "$form.Controls.Add($textBox1)\n" +
@@ -120,16 +122,15 @@ public class SettingGUI {
                 System.out.println(line);
             }
 
-            // 終了コードを取得して、正常終了かどうかを確認
             int exitCode = process.waitFor();
             if (exitCode == 0) {
-                System.out.println("PowerShellスクリプトが正常に実行されました。");
+                System.out.println("正常に実行されました。");
             } else {
-                System.out.println("PowerShellスクリプトの実行中にエラーが発生しました。");
+                System.out.println("実行中にエラーが発生しました。");
             }
 
         } catch (Exception e) {
-            e.printStackTrace();
+            new MyException(e);
         }
     }
 }

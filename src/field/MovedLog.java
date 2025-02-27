@@ -4,6 +4,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * ログ用のフィールド
+ * <p>
+ * 【廃止】
+ *
+ * @author raindazo
+ */
 public class MovedLog {
 
     private static final Map<String,String> movedlList = new HashMap<>();

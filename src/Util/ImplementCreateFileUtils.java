@@ -77,6 +77,8 @@ public class ImplementCreateFileUtils implements CreateFileUtils {
 
     /**
      * 移動したファイルをlogファイルに出力
+     * <p>
+     * 【廃止】
      *
      * @author raindazo
      */
@@ -99,6 +101,8 @@ public class ImplementCreateFileUtils implements CreateFileUtils {
 
     /**
      * MovedLogファイルが存在するか確認
+     * <p>
+     * 【廃止】
      *
      * @author raindazo
      */
@@ -148,6 +152,8 @@ public class ImplementCreateFileUtils implements CreateFileUtils {
     /**
      * 写真を日付分けする
      *
+     * @param picturesList          移動対象ファイル
+     * @param createPictureFilePath 移動先ファイルパス
      * @author raindazo
      */
     @Override
@@ -158,13 +164,14 @@ public class ImplementCreateFileUtils implements CreateFileUtils {
                 .filter(path -> checkDate(picture).equals(path.getName()))
                 .findFirst()
                 .ifPresent(path -> {
-                    MovedLog.addEntry(picture.getName(), path.getName());
+                    //MovedLog.addEntry(picture.getName(), path.getName()); ログ機能廃止
                     picture.renameTo(new File(path.toPath().resolve(picture.getName()).toString()));
                 }));
 
-        if (!MovedLog.getList().isEmpty()) {
-            System.out.println(MovedLog.getList().size() + "件ファイルを移動しました");
-        }
+        //ログ機能廃止
+//        if (!MovedLog.getList().isEmpty()) {
+//            System.out.println(MovedLog.getList().size() + "件ファイルを移動しました");
+//        }
     }
 
 
@@ -177,7 +184,7 @@ public class ImplementCreateFileUtils implements CreateFileUtils {
     public boolean validation(String[] args) {
         final String ng = ".*[@＠｢「｣」：]+.*";
 
-        if (args.length != 3) {
+        if (args.length != 2) {
             System.out.println("入力されていない項目があります。");
             return true;
         }
@@ -186,7 +193,6 @@ public class ImplementCreateFileUtils implements CreateFileUtils {
             System.out.println(args[0] + "もしくは" + args[1] + "に使用できない文字(￥,：,＊,？,”,＜,＞,｜)が含まれています。\nパスを確認後、再度起動してください。");
             return true;
         }
-
         return false;
     }
 }
