@@ -10,8 +10,11 @@ import java.nio.charset.StandardCharsets;
  * @author raindazo
  */
 public class SettingGUI {
+    static final String EMPTY = "";
 
-    public SettingGUI() {
+    public SettingGUI(String[] parameter) {
+        final String vrcPictureFilePath = (parameter.length > 0 && !parameter[0].isEmpty()) ? parameter[0] : EMPTY;
+        final String createPictureFilePath = (parameter.length > 0 && !parameter[1].isEmpty()) ? parameter[1] : EMPTY;
         try {
             // PowerShellスクリプトをJavaコード内に埋め込む
             String powershellScript =
@@ -53,9 +56,15 @@ public class SettingGUI {
                             "$buttonRun.Location = New-Object System.Drawing.Point(10, 110)\n" +
                             "\n" +
                             "# 変数定義\n" +
-                            "$vrcPictureFilePath = ''\n" +
-                            "$createPictureFilePath = ''\n" +
+                            "$vrcPictureFilePath = '"+vrcPictureFilePath+"'\n" +
+                            "$createPictureFilePath = '"+createPictureFilePath+"'\n" +
                             "\n" +
+                            "if ($vrcPictureFilePath -ne '') {\n" +
+                            "       $textBox1.Text = $vrcPictureFilePath\n" +
+                            "}\n" +
+                            "if ($createPictureFilePath -ne '') {\n" +
+                            "       $textBox2.Text = $createPictureFilePath\n" +
+                            "}\n" +
                             "# 【VRCの写真が格納されている場所】選択イベント\n" +
                             "$button1.Add_Click({\n" +
                             "    $folderDialog = New-Object System.Windows.Forms.FolderBrowserDialog\n" +
@@ -81,14 +90,13 @@ public class SettingGUI {
                             "        $tempFile = [System.IO.Path]::Combine((Get-Location).Path, \"VRCpbd.setting\")\n" +
                             "        $content = \"$vrcPictureFilePath`r`n$createPictureFilePath\"\n" +
                             "        [System.IO.File]::WriteAllText($tempFile, $content)\n" +
-                            "        [System.Windows.Forms.MessageBox]::Show(\"一時ファイルに保存しました: $tempFile\")\n" +
+                            "        [System.Windows.Forms.MessageBox]::Show(\"設定が完了しました。\n処理を開始します。\")\n" +
+                            "        $form.Close()\n" +
                             "    } else {\n" +
                             "        [System.Windows.Forms.MessageBox]::Show('すべての情報を入力してください。')\n" +
                             "    }\n" +
                             "})\n" +
                             "\n" +
-                            //TODO 一時ファイルの場所を表示しない。
-                            //TODO 処理終了後ウィンドウを閉じる。
                             "# フォームにコントロールを追加\n" +
                             "$form.Controls.Add($button1)\n" +
                             "$form.Controls.Add($textBox1)\n" +
@@ -115,16 +123,16 @@ public class SettingGUI {
             ProcessBuilder processBuilder = new ProcessBuilder("cmd.exe", "/c", command);
             Process process = processBuilder.start();
 
-            // 実行結果を読み取って表示
-            BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-            String line;
-            while ((line = reader.readLine()) != null) {
-                System.out.println(line);
-            }
+//            // 実行結果を読み取って表示
+//            BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+//            String line;
+//            while ((line = reader.readLine()) != null) {
+//                System.out.println(line);
+//            }
 
             int exitCode = process.waitFor();
             if (exitCode == 0) {
-                System.out.println("正常に実行されました。");
+                System.out.println("ファイルの設定が完了しました。");
             } else {
                 System.out.println("実行中にエラーが発生しました。");
             }

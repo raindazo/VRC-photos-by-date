@@ -2,7 +2,6 @@ import Util.CreateFileUtils;
 import Util.CreateTaskScheduler;
 import Util.ImplementCreateFileUtils;
 import Util.ImplementTaskSchedulerUtils;
-import exception.MyException;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -25,9 +24,9 @@ public class Main {
         String parameter = (args.length > 0 && !args[0].isEmpty()) ? args[0] : EMPTY;
         switch (parameter) {
             case CREATE_TASK_SCHEDULER -> CreateTaskSchedulerExecute(args);
-            case EMPTY -> new SettingGUI();
+            case EMPTY -> new SettingGUI(getPropertyFromFile(parameter));
         }
-        FileCreateExecute(getPropertyFromFile());
+        FileCreateExecute(getPropertyFromFile(parameter));
     }
 
     /**
@@ -47,7 +46,7 @@ public class Main {
         if (validation) {
             return;
         }
-        
+
         implementCreateFile.fileCreate(args[0], args[1]);
 
         //ファイル作成
@@ -79,11 +78,15 @@ public class Main {
      * @return 設定ファイルで読み取った値
      * @author raindazo
      */
-    public static String[] getPropertyFromFile() {
+    public static String[] getPropertyFromFile(String parameter) {
         try (BufferedReader br = new BufferedReader(new FileReader(PROPERTY_FROM_FILE))) {
             return br.lines().toArray(String[]::new);
         } catch (IOException e) {
-            new MyException(e);
+            if (parameter.isEmpty()) {
+                return new String[0];
+            }
+            System.out.println("初期設定が完了していません。\nCreatePictureFile.batを起動して設定を行ってください。");
+            System.exit(0);
             return new String[0];
         }
     }
