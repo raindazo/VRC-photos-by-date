@@ -61,7 +61,7 @@ public class Main {
     /**
      * 　タスクスケジューラ作成
      *
-     * @param args 仕分け対象ファイル・仕分け先ファイル
+     * @param args タスクスケジューラ作成指示
      * @author raindazo
      */
     public static void CreateTaskSchedulerExecute(String[] args) {
@@ -70,6 +70,7 @@ public class Main {
 
         ImplementTaskScheduler.readXml(args[1]);
 
+        System.exit(1);
     }
 
     /**

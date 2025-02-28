@@ -24,7 +24,7 @@ public class ImplementTaskSchedulerUtils implements CreateTaskScheduler {
 
     @Override
     public void createXml(List<String> xml, String xmlPath) {
-        //<Arguments>が含まれていれば取り除く
+        //<Arguments>が含まれていれば一度取り除く
         List<String> processedLsit = xml.stream().filter(v -> !v.contains("<Arguments>")).toList();
 
         Path path = Path.of(xmlPath).getParent();
@@ -43,10 +43,11 @@ public class ImplementTaskSchedulerUtils implements CreateTaskScheduler {
         }
 
         String finalCommandAttribute = commandAttribute;
-        String WorkingDirectoryAttribute = "<WorkingDirectory>" + path + "\\</WorkingDirectory>";
+        String workingDirectoryAttribute = "<WorkingDirectory>" + path + "\\</WorkingDirectory>";
+        String argumentsAttribute = "<Arguments>scheduler</Arguments>";
         List<String> outputList = processedLsit.stream()
                 .flatMap(v -> v.contains("<Command>")
-                        ? Stream.of(finalCommandAttribute, WorkingDirectoryAttribute)
+                        ? Stream.of(finalCommandAttribute, argumentsAttribute, workingDirectoryAttribute)
                         : Stream.of(v))
                 .toList();
 
