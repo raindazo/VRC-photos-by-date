@@ -56,8 +56,8 @@ public class SettingGUI {
                             "$buttonRun.Location = New-Object System.Drawing.Point(10, 110)\n" +
                             "\n" +
                             "# 変数定義\n" +
-                            "$vrcPictureFilePath = '"+vrcPictureFilePath+"'\n" +
-                            "$createPictureFilePath = '"+createPictureFilePath+"'\n" +
+                            "$vrcPictureFilePath = '" + vrcPictureFilePath + "'\n" +
+                            "$createPictureFilePath = '" + createPictureFilePath + "'\n" +
                             "\n" +
                             "if ($vrcPictureFilePath -ne '') {\n" +
                             "       $textBox1.Text = $vrcPictureFilePath\n" +
@@ -87,9 +87,14 @@ public class SettingGUI {
                             "    $createPictureFilePath = $textBox2.Text\n" +
                             "    if ($vrcPictureFilePath -and $createPictureFilePath -ne $null) {\n" +
                             "        # 設定ファイルに保存\n" +
-                            "        $tempFile = [System.IO.Path]::Combine((Get-Location).Path, \"VRCpbd.setting\")\n" +
+                            "        $settingFolder = [System.IO.Path]::Combine((Get-Location).Path, \"setting\")\n" +
+                            "        # settingフォルダが存在しない場合は作成\n" +
+                            "         if (-not (Test-Path $settingFolder)) {\n" +
+                            "           New-Item -ItemType Directory -Path $settingFolder\n" +
+                            "         }\n" +
+                            "        $settingFile = [System.IO.Path]::Combine($settingFolder, \"VRCpbd.setting\")\n" +
                             "        $content = \"$vrcPictureFilePath`r`n$createPictureFilePath\"\n" +
-                            "        [System.IO.File]::WriteAllText($tempFile, $content)\n" +
+                            "        [System.IO.File]::WriteAllText($settingFile, $content)\n" +
                             "        [System.Windows.Forms.MessageBox]::Show(\"設定が完了しました。\n処理を開始します。\")\n" +
                             "        $form.Close()\n" +
                             "    } else {\n" +
@@ -122,13 +127,6 @@ public class SettingGUI {
             String command = "powershell.exe -ExecutionPolicy Bypass -File \"" + tempScript.getAbsolutePath() + "\"";
             ProcessBuilder processBuilder = new ProcessBuilder("cmd.exe", "/c", command);
             Process process = processBuilder.start();
-
-//            // 実行結果を読み取って表示
-//            BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-//            String line;
-//            while ((line = reader.readLine()) != null) {
-//                System.out.println(line);
-//            }
 
             int exitCode = process.waitFor();
             if (exitCode == 0) {

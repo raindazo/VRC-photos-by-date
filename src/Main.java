@@ -16,7 +16,7 @@ import java.io.IOException;
  */
 
 public class Main {
-    static final String PROPERTY_FROM_FILE = "./VRCpbd.setting";
+    static final String PROPERTY_FROM_FILE = "./setting/VRCpbd.setting";
     static final String CREATE_TASK_SCHEDULER = "CreateTaskScheduler";
     static final String EMPTY = "";
 
